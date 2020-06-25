@@ -26,20 +26,30 @@ jobs:
         
       - name: Copy the .github directory
         run: cp .github ./redwoodblog -R
-      - name: Add Home page
+        
+      - name: Add Home, About and Layout page
         working-directory: ./redwoodblog
         run: |
-          yarn redwood generate page home /
-          yarn redwood generate page about
-          yarn redwood g layout blog
+          yarn rw g page home /
+          yarn rw g page about
+          yarn rw g page contact
+          yarn rw g page BlogPost          
+          yarn rw g cell BlogPost
+          yarn rw g component BlogPost
+          yarn rw g layout blog
           
       - name: Edit the HomePage.js file
         working-directory: ./redwoodblog
         run: |
           : > ./web/src/pages/HomePage/HomePage.js
           echo "import BlogLayout from 'src/layouts/BlogLayout'" >> ./web/src/pages/HomePage/HomePage.js
+          echo "import BlogPostsCell from 'src/components/BlogPostsCell'" >> ./web/src/pages/HomePage/HomePage.js
           echo "const HomePage = () => {" >> ./web/src/pages/HomePage/HomePage.js
-          echo "return <BlogLayout>Home</BlogLayout>" >> ./web/src/pages/HomePage/HomePage.js
+          echo "  return (" >> ./web/src/pages/HomePage/HomePage.js
+          echo "    <BlogLayout>" >> ./web/src/pages/HomePage/HomePage.js
+          echo "      <BlogPostsCell />" >> ./web/src/pages/HomePage/HomePage.js
+          echo "    </BlogLayout>" >> ./web/src/pages/HomePage/HomePage.js
+          echo "  )" >> ./web/src/pages/HomePage/HomePage.js
           echo "}" >> ./web/src/pages/HomePage/HomePage.js
           echo "export default HomePage" >> ./web/src/pages/HomePage/HomePage.js
           
@@ -78,6 +88,9 @@ jobs:
           echo "          <li>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
           echo "            <Link to={routes.about()}>About</Link>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
           echo "          </li>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "          <li>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "            <Link to={routes.contact()}>Contact</Link>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "          </li>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
           echo "        </ul>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
           echo "      </nav>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
           echo "    </>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
@@ -103,6 +116,13 @@ jobs:
           echo "  body      String" >> ./api/prisma/schema.prisma
           echo "  createdAt DateTime @default(now())" >> ./api/prisma/schema.prisma
           echo "}" >> ./api/prisma/schema.prisma
+          echo "model Contact {" >> ./api/prisma/schema.prisma
+          echo "  id        Int      @id @default(autoincrement())" >> ./api/prisma/schema.prisma
+          echo "  name      String" >> ./api/prisma/schema.prisma
+          echo "  email     String" >> ./api/prisma/schema.prisma
+          echo "  message   String" >> ./api/prisma/schema.prisma
+          echo "  createdAt DateTime @default(now())" >> ./api/prisma/schema.prisma
+          echo "}" >> ./api/prisma/schema.prisma
           
       - name: Update database
         working-directory: ./redwoodblog
@@ -110,7 +130,200 @@ jobs:
           yarn redwood db save
           yarn rw db up
           yarn rw g scaffold post
+          yarn rw g sdl contact
+          
+      - name: Create cells
+        working-directory: ./redwoodblog
+        run: |
+          yarn rw g cell BlogPosts
 
+      - name: Edit the BlogPostsCell.js file
+        working-directory: ./redwoodblog
+        run: |
+          : > ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "import { Link, routes } from '@redwoodjs/router'" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "import BlogPost from 'src/components/BlogPost'" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "export const QUERY = gql`" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "  query {" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "    posts {" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "      id" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "      title" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "      body" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "      createdAt" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "    }" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "  }" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "`" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "export const Loading = () => <div>Loading...</div>" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "export const Empty = () => <div>Empty</div>" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "export const Failure = ({ error }) => <div>Error: {error.message}</div>" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "export const Success = ({ posts }) => {" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "  return posts.map((post) => <BlogPost key={post.id} post={post} />)" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "}" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          
+      - name: Edit the BlogPostCell.js file
+        working-directory: ./redwoodblog
+        run: |
+          : > ./web/src/components/BlogPostCell/BlogPostCell.js          
+          echo "import { Link, routes } from '@redwoodjs/router'" >> ./web/src/components/BlogPostCell/BlogPostCell.js
+          echo "import BlogPost from 'src/components/BlogPost'" >> ./web/src/components/BlogPostCell/BlogPostCell.js
+          echo "export const QUERY = gql`" >> ./web/src/components/BlogPostCell/BlogPostCell.js
+          echo "  query($id: Int!) {" >> ./web/src/components/BlogPostCell/BlogPostCell.js
+          echo "    post(id: $id) {" >> ./web/src/components/BlogPostCell/BlogPostCell.js
+          echo "      id" >> ./web/src/components/BlogPostCell/BlogPostCell.js
+          echo "      title" >> ./web/src/components/BlogPostCell/BlogPostCell.js
+          echo "      body" >> ./web/src/components/BlogPostCell/BlogPostCell.js
+          echo "      createdAt" >> ./web/src/components/BlogPostCell/BlogPostCell.js
+          echo "    }" >> ./web/src/components/BlogPostCell/BlogPostCell.js
+          echo "  }" >> ./web/src/components/BlogPostCell/BlogPostCell.js
+          echo "`" >> ./web/src/components/BlogPostCell/BlogPostCell.js
+          echo "export const Loading = () => <div>Loading...</div>" >> ./web/src/components/BlogPostCell/BlogPostCell.js
+          echo "export const Empty = () => <div>Empty</div>" >> ./web/src/components/BlogPostCell/BlogPostCell.js          
+          echo "export const Success = ({ post }) => {" >> ./web/src/components/BlogPostCell/BlogPostCell.js
+          echo "  return <BlogPost post={post} />" >> ./web/src/components/BlogPostCell/BlogPostCell.js          
+          echo "}" >> ./web/src/components/BlogPostCell/BlogPostCell.js
+          
+      - name: Edit the BlogPostPage.js file
+        working-directory: ./redwoodblog
+        run: |
+          : > ./web/src/pages/BlogPostPage/BlogPostPage.js
+          echo "import BlogLayout from 'src/layouts/BlogLayout'" >> ./web/src/components/BlogPostPage/BlogPostPage.js
+          echo "import BlogPostCell from 'src/components/BlogPostCell'" >> ./web/src/components/BlogPostPage/BlogPostPage.js
+          echo "const BlogPostPage = ({ id }) => {" >> ./web/src/components/BlogPostPage/BlogPostPage.js
+          echo "  return (" >> ./web/src/components/BlogPostPage/BlogPostPage.js
+          echo "    <BlogLayout>" >> ./web/src/components/BlogPostPage/BlogPostPage.js
+          echo "      <BlogPostCell id={id} />" >> ./web/src/components/BlogPostPage/BlogPostPage.js
+          echo "    </BlogLayout>" >> ./web/src/components/BlogPostPage/BlogPostPage.js
+          echo "  )" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
+          echo "}" >> ./web/src/components/BlogPostPage/BlogPostPage.js
+          echo "export default BlogPostPage" >> ./web/src/pages/BlogPostPage/BlogPostPage.js
+          
+      - name: Edit the BlogPost.js file
+        working-directory: ./redwoodblog
+        run: |
+          : > ./web/src/components/BlogPost/BlogPost.js
+          echo "import { Link, routes } from '@redwoodjs/router'" >> ./web/src/components/BlogPost/BlogPost.js
+          echo "const BlogPost = ({ post }) => {" >> ./web/src/components/BlogPost/BlogPost.js
+          echo "  return (" >> ./web/src/components/BlogPost/BlogPost.js
+          echo "    <article>" >> ./web/src/components/BlogPost/BlogPost.js
+          echo "      <header>" >> ./web/src/components/BlogPost/BlogPost.js
+          echo "        <h2>" >> ./web/src/components/BlogPost/BlogPost.js
+          echo "          <Link to={routes.blogPost({ id: post.id })}>{post.title}</Link>" >> ./web/src/components/BlogPost/BlogPost.js
+          echo "        </h2>" >> ./web/src/components/BlogPost/BlogPost.js
+          echo "      <header>" >> ./web/src/components/BlogPost/BlogPost.js
+          echo "      <div>{post.body}</div>" >> ./web/src/components/BlogPost/BlogPost.js
+          echo "    <article>" >> ./web/src/components/BlogPost/BlogPost.js
+          echo "  )" >> ./web/src/components/BlogPost/BlogPost.js
+          echo "}" >> ./web/src/components/BlogPost/BlogPost.js
+          echo "export default BlogPost" >> ./web/src/components/BlogPost/BlogPost.js
+          
+      - name: Edit the index.css file
+        working-directory: ./redwoodblog
+        run: |
+          : > ./web/src/index.css
+          echo "button, input, label, textarea {" >> ./web/src/index.css
+          echo "  display: block;" >> ./web/src/index.css
+          echo "  outline: none;" >> ./web/src/index.css
+          echo "}" >> ./web/src/index.css
+          echo "label {" >> ./web/src/index.css
+          echo "  margin-top: 1rem;" >> ./web/src/index.css
+          echo "}" >> ./web/src/index.css
+          echo ".error {" >> ./web/src/index.css
+          echo "  color: red;" >> ./web/src/index.css
+          echo "}" >> ./web/src/index.css
+          echo "input.error, textarea.error {" >> ./web/src/index.css
+          echo "  border: 1px solid red;" >> ./web/src/index.css
+          echo "}" >> ./web/src/index.css
+          
+      - name: Edit the contacts.js file
+        working-directory: ./redwoodblog
+        run: |
+          : > ./api/src/services/contacts/contacts.js
+          echo "import { db } from 'src/lib/db'" >> ./api/src/services/contacts/contacts.js
+          echo "export const contacts = () => {" >> ./api/src/services/contacts/contacts.js
+          echo "  return db.contact.findMany()" >> ./api/src/services/contacts/contacts.js
+          echo "}" >> ./api/src/services/contacts/contacts.js
+          echo "export const createContact = ({ input }) => {" >> ./api/src/services/contacts/contacts.js
+          echo "  return db.contact.create({ data: input })" >> ./api/src/services/contacts/contacts.js
+          echo "}" >> ./api/src/services/contacts/contacts.js
+          
+      - name: Edit the ContactPage.js file
+        working-directory: ./redwoodblog
+        run: |
+          : > ./web/src/pages/ContactPage/ContactPage.js
+          echo "import {" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "  Form," >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "  TextField," >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "  TextAreaField," >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "  Submit," >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "  FieldError," >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "  Label," >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "  FormError," >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "  useMutation," >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "} from '@redwoodjs/web'" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "import { useForm } from 'react-hook-form'" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "import BlogLayout from 'src/layouts/BlogLayout'" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "const CREATE_CONTACT = gql`" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "  mutation CreateContactMutation($input: CreateContactInput!) {" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    createContact(input: $input) {" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "      id" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    }" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "  }" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "`" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "const ContactPage = () => {" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "const formMethods = useForm({ mode: 'onBlur' })" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "const [create, { loading, error }] = useMutation(CREATE_CONTACT, {" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "  onCompleted: () => {" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    alert('Thank you for your submission!')" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    formMethods.reset()" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "  }," >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "})" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "const onSubmit = (data) => {" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "  create({ variables: { input: data } })" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "  console.log(data)" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "}" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "return (" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "<BlogLayout>" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "  <Form" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    onSubmit={onSubmit}" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    validation={{ mode: 'onBlur' }}" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    error={error}" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    formMethods={formMethods}" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "  >" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    <FormError" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "      error={error}" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "      wrapperStyle={{ color: 'red', backgroundColor: 'lavenderblush' }}" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    />" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    <Label name="name" errorClassName="error">" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "      Name" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    </Label>" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    <TextField" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "      name='name'" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "      validation={{ required: true }}" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "      errorClassName='error'" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "     />" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    <FieldError name="name" className="error" />" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    <Label name="email" errorClassName="error">" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "      Email" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    </Label>" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    <TextField" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "      name='email'" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "      validation={{ required: true }}" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "      errorClassName='error'" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "     />" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    <FieldError name="email" className="error" />" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    <Label name="message" errorClassName="error">" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "      Message" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    </Label>" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    <TextAreaField" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "      name='message'" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "      validation={{ required: true }}" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "      errorClassName='error'" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "     />" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "    <FieldError name="message" className="error" />" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "  )" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "}" >> ./web/src/pages/ContactPage/ContactPage.js
+          echo "export default ContactPage" >> ./web/src/pages/ContactPage/ContactPage.js
+          
       - name: Git-init
         working-directory: ./redwoodblog
         run: git init
