@@ -35,6 +35,7 @@ jobs:
           yarn rw g page contact
           yarn rw g page BlogPost          
           yarn rw g cell BlogPost
+          yarn rw g cell BlogPosts
           yarn rw g component BlogPost
           yarn rw g layout blog
           
@@ -127,15 +128,10 @@ jobs:
       - name: Update database
         working-directory: ./redwoodblog
         run: |
-          yarn redwood db save
+          yarn rw db save
           yarn rw db up
           yarn rw g scaffold post
           yarn rw g sdl contact
-          
-      - name: Create cells
-        working-directory: ./redwoodblog
-        run: |
-          yarn rw g cell BlogPosts
 
       - name: Edit the BlogPostsCell.js file
         working-directory: ./redwoodblog
