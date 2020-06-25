@@ -193,7 +193,7 @@ jobs:
           echo "    <BlogLayout>" >> ./web/src/pages/BlogPostPage/BlogPostPage.js
           echo "      <BlogPostCell id={id} />" >> ./web/src/pages/BlogPostPage/BlogPostPage.js
           echo "    </BlogLayout>" >> ./web/src/pages/BlogPostPage/BlogPostPage.js
-          echo "  )" >> ./web/src/pages/BlogPostsCell/BlogPostsCell.js
+          echo "  )" >> ./web/src/pages/BlogPostPage/BlogPostPage.js
           echo "}" >> ./web/src/pages/BlogPostPage/BlogPostPage.js
           echo "export default BlogPostPage" >> ./web/src/pages/BlogPostPage/BlogPostPage.js
           
