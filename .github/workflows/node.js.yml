@@ -186,15 +186,15 @@ jobs:
         working-directory: ./redwoodblog
         run: |
           : > ./web/src/pages/BlogPostPage/BlogPostPage.js
-          echo "import BlogLayout from 'src/layouts/BlogLayout'" >> ./web/src/components/BlogPostPage/BlogPostPage.js
-          echo "import BlogPostCell from 'src/components/BlogPostCell'" >> ./web/src/components/BlogPostPage/BlogPostPage.js
-          echo "const BlogPostPage = ({ id }) => {" >> ./web/src/components/BlogPostPage/BlogPostPage.js
-          echo "  return (" >> ./web/src/components/BlogPostPage/BlogPostPage.js
-          echo "    <BlogLayout>" >> ./web/src/components/BlogPostPage/BlogPostPage.js
-          echo "      <BlogPostCell id={id} />" >> ./web/src/components/BlogPostPage/BlogPostPage.js
-          echo "    </BlogLayout>" >> ./web/src/components/BlogPostPage/BlogPostPage.js
-          echo "  )" >> ./web/src/components/BlogPostsCell/BlogPostsCell.js
-          echo "}" >> ./web/src/components/BlogPostPage/BlogPostPage.js
+          echo "import BlogLayout from 'src/layouts/BlogLayout'" >> ./web/src/pages/BlogPostPage/BlogPostPage.js
+          echo "import BlogPostCell from 'src/components/BlogPostCell'" >> ./web/src/pages/BlogPostPage/BlogPostPage.js
+          echo "const BlogPostPage = ({ id }) => {" >> ./web/src/pages/BlogPostPage/BlogPostPage.js
+          echo "  return (" >> ./web/src/pages/BlogPostPage/BlogPostPage.js
+          echo "    <BlogLayout>" >> ./web/src/pages/BlogPostPage/BlogPostPage.js
+          echo "      <BlogPostCell id={id} />" >> ./web/src/pages/BlogPostPage/BlogPostPage.js
+          echo "    </BlogLayout>" >> ./web/src/pages/BlogPostPage/BlogPostPage.js
+          echo "  )" >> ./web/src/pages/BlogPostsCell/BlogPostsCell.js
+          echo "}" >> ./web/src/pages/BlogPostPage/BlogPostPage.js
           echo "export default BlogPostPage" >> ./web/src/pages/BlogPostPage/BlogPostPage.js
           
       - name: Edit the BlogPost.js file
