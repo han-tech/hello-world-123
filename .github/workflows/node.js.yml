@@ -1,0 +1,137 @@
+name: CI
+on: [push]
+jobs:
+  build:
+    name: Hello RedWoodJS blog
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v2
+        
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+          
+      - name: Upgrade Yarn
+        run: npm install yarn -g
+      - name: Clean all directories
+        run: ls | grep -v ".github" | while read filename; do rm -rf "$filename"; done
+        
+      - name: Create app
+        run: yarn create redwood-app ./redwoodblog
+        
+      - name: Copy the .github directory
+        run: cp .github ./redwoodblog -R
+      - name: Add Home page
+        working-directory: ./redwoodblog
+        run: |
+          yarn redwood generate page home /
+          yarn redwood generate page about
+          yarn redwood g layout blog
+          
+      - name: Edit the HomePage.js file
+        working-directory: ./redwoodblog
+        run: |
+          : > ./web/src/pages/HomePage/HomePage.js
+          echo "import BlogLayout from 'src/layouts/BlogLayout'" >> ./web/src/pages/HomePage/HomePage.js
+          echo "const HomePage = () => {" >> ./web/src/pages/HomePage/HomePage.js
+          echo "return <BlogLayout>Home</BlogLayout>" >> ./web/src/pages/HomePage/HomePage.js
+          echo "}" >> ./web/src/pages/HomePage/HomePage.js
+          echo "export default HomePage" >> ./web/src/pages/HomePage/HomePage.js
+          
+      - name: Edit the AboutPage.js file
+        working-directory: ./redwoodblog
+        run: |
+          : > ./web/src/pages/AboutPage/AboutPage.js
+          echo "import { Link, routes } from '@redwoodjs/router'" >> ./web/src/pages/AboutPage/AboutPage.js
+          echo "import BlogLayout from 'src/layouts/BlogLayout'" >> ./web/src/pages/AboutPage/AboutPage.js
+          echo "const AboutPage = () => {" >> ./web/src/pages/AboutPage/AboutPage.js
+          echo "  return (" >> ./web/src/pages/AboutPage/AboutPage.js
+          echo "    <BlogLayout>" >> ./web/src/pages/AboutPage/AboutPage.js
+          echo "      <p>" >> ./web/src/pages/AboutPage/AboutPage.js
+          echo "        This site was created to demonstrate my mastery of Redwood: Look on my works, ye mighty, and despair!" > ./web/src/pages/AboutPage/AboutPage.js
+          echo "      </p>" >> ./web/src/pages/AboutPage/AboutPage.js
+          echo "    </BlogLayout>" >> ./web/src/pages/AboutPage/AboutPage.js
+          echo "  )" >> ./web/src/pages/AboutPage/AboutPage.js
+          echo "}" >> ./web/src/pages/AboutPage/AboutPage.js
+          echo "export default AboutPage" >> ./web/src/pages/AboutPage/AboutPage.js
+        
+      - name: Edit the BlogLayout.js file
+        working-directory: ./redwoodblog
+        run: |
+          : > ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "import { Link, routes } from '@redwoodjs/router'" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "const BlogLayout = ({ children }) => {" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "  return (" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "    <>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "      <header>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "        <h1>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "          <Link to={routes.home()}>Redwood Blog</Link>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "        </h1>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "      </header>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "      <nav>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "        <ul>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "          <li>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "            <Link to={routes.about()}>About</Link>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "          </li>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "        </ul>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "      </nav>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "    </>" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "  )" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "}" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          echo "export default BlogLayout" >> ./web/src/layouts/BlogLayout/BlogLayout.js
+          
+      - name: Edit the schema.prisma file
+        working-directory: ./redwoodblog
+        run: |
+          : > ./api/prisma/schema.prisma
+          echo "datasource DS {" >> ./api/prisma/schema.prisma
+          echo "  provider = 'sqlite'" >> ./api/prisma/schema.prisma
+          echo "  url      = env('DATABASE_URL')" >> ./api/prisma/schema.prisma
+          echo "}" >> ./api/prisma/schema.prisma
+          echo "generator client {" >> ./api/prisma/schema.prisma
+          echo "  provider = 'prisma-client-js'" >> ./api/prisma/schema.prisma
+          echo "  binaryTargets = env('BINARY_TARGET')" >> ./api/prisma/schema.prisma
+          echo "}" >> ./api/prisma/schema.prisma
+          echo "model Post {" >> ./api/prisma/schema.prisma
+          echo "  id        Int      @id @default(autoincrement())" >> ./api/prisma/schema.prisma
+          echo "  title     String" >> ./api/prisma/schema.prisma
+          echo "  body      String" >> ./api/prisma/schema.prisma
+          echo "  createdAt DateTime @default(now())" >> ./api/prisma/schema.prisma
+          echo "}" >> ./api/prisma/schema.prisma
+          
+      - name: Update database
+        working-directory: ./redwoodblog
+        run: |
+          yarn redwood db save
+          yarn rw db up
+          yarn rw g scaffold post
+
+      - name: Git-init
+        working-directory: ./redwoodblog
+        run: git init
+        
+      - name: Git-add
+        working-directory: ./redwoodblog
+        run: git add .
+        
+      - name: Git-config
+        working-directory: ./redwoodblog
+        run: |
+          git config --global user.email "hantech2017@gmail.com"
+          git config --global user.name "Dinh Quang Son"
+          
+      - name: Git-commit
+        working-directory: ./redwoodblog
+        run: git commit -m 'First commit'
+        
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:          
+          directory: ./redwoodblog
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force: true
