@@ -147,6 +147,9 @@ jobs:
           args: addons:create heroku-postgresql:hobby-dev -a hello-world-123-321-123
           
       - name: Update database
+        env:
+          BINARY_TARGET: ${{ secrets.BINARY_TARGET }}
+          DATABASE_URL: ${{ ENV['DATABASE_URL'] }}?connection_limit=1
         working-directory: ./redwoodblog
         run: |
           yarn rw db save
