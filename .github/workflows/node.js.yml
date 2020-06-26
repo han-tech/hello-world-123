@@ -131,10 +131,10 @@ jobs:
           : > ./.netrc
           echo "machine api.heroku.com" >> ./.netrc
           echo "  login peaceman77@hotmail.com" >> ./.netrc
-          echo "  password 220013b9-92cc-4892-9301-4fe81fbf9d5c" >> ./.netrc
+          echo "  password 5c591d0f-1427-47d1-b518-a77ff7f92d4e" >> ./.netrc
           echo "machine git.heroku.com" >> ./.netrc
           echo "  login peaceman77@hotmail.com" >> ./.netrc
-          echo "  password 220013b9-92cc-4892-9301-4fe81fbf9d5c" >> ./.netrc
+          echo "  password 5c591d0f-1427-47d1-b518-a77ff7f92d4e" >> ./.netrc
           heroku login
           heroku create hello-world-123
           heroku addons:create heroku-postgresql:hobby-dev
