@@ -104,7 +104,7 @@ jobs:
         run: |
           : > ./api/prisma/schema.prisma
           echo "datasource DS {" >> ./api/prisma/schema.prisma
-          echo "  provider = 'sqlite'" >> ./api/prisma/schema.prisma
+          echo "  provider = 'redwood'" >> ./api/prisma/schema.prisma
           echo "  url      = env('DATABASE_URL')" >> ./api/prisma/schema.prisma
           echo "}" >> ./api/prisma/schema.prisma
           echo "generator client {" >> ./api/prisma/schema.prisma
