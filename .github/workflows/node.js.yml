@@ -125,6 +125,20 @@ jobs:
           echo "  createdAt DateTime @default(now())" >> ./api/prisma/schema.prisma
           echo "}" >> ./api/prisma/schema.prisma
           
+      - name: Create database in heroku
+        working-directory: ./redwoodblog
+        run: |
+          : > ./.netrc
+          echo "machine api.heroku.com" >> ./.netrc
+          echo "  login peaceman77@hotmail.com" >> ./.netrc
+          echo "  password 220013b9-92cc-4892-9301-4fe81fbf9d5c" >> ./.netrc
+          echo "machine git.heroku.com" >> ./.netrc
+          echo "  login peaceman77@hotmail.com" >> ./.netrc
+          echo "  password 220013b9-92cc-4892-9301-4fe81fbf9d5c" >> ./.netrc
+          heroku login
+          heroku create hello-world-123
+          heroku addons:create heroku-postgresql:hobby-dev
+          
       - name: Update database
         working-directory: ./redwoodblog
         run: |
