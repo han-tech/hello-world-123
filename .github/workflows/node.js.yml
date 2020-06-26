@@ -125,7 +125,7 @@ jobs:
           echo "  createdAt DateTime @default(now())" >> ./api/prisma/schema.prisma
           echo "}" >> ./api/prisma/schema.prisma
           
-      - name: Create database in heroku
+      - name: Create .netrc file
         working-directory: ./redwoodblog
         run: |
           : > ./.netrc
@@ -142,6 +142,13 @@ jobs:
       - name: List files
         working-directory: ./redwoodblog
         run: ls
+          
+      - name: Create postgresql database
+        working-directory: ./redwoodblog
+        run: |          
+          heroku login
+          heroku create hello-world-123
+          heroku addons:create heroku-postgresql:hobby-dev
           
       - name: Update database
         working-directory: ./redwoodblog
