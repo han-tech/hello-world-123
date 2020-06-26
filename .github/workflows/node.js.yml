@@ -132,11 +132,19 @@ jobs:
         with:
           args: container:login
           
-      - name: Create postgresql database
-        working-directory: ./redwoodblog
-        run: |          
-          heroku create hello-world-123
-          heroku addons:create heroku-postgresql:hobby-dev
+      - name: create app
+        uses: actions/heroku@master
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        with:
+          args: heroku create hello-world-123
+          
+      - name: ostgresql database
+        uses: actions/heroku@master
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        with:
+          args: heroku addons:create heroku-postgresql:hobby-dev
           
       - name: Update database
         working-directory: ./redwoodblog
