@@ -125,25 +125,16 @@ jobs:
           echo "  createdAt DateTime @default(now())" >> ./api/prisma/schema.prisma
           echo "}" >> ./api/prisma/schema.prisma
           
-      - name: Create .netrc file
-        working-directory: ./redwoodblog
-        run: |
-          : > .netrc
-          echo "machine api.heroku.com" >> .netrc
-          echo "  login peaceman77@hotmail.com" >> .netrc
-          echo "  password 5c591d0f-1427-47d1-b518-a77ff7f92d4e" >> .netrc
-          echo "machine git.heroku.com" >> .netrc
-          echo "  login peaceman77@hotmail.com" >> .netrc
-          echo "  password 5c591d0f-1427-47d1-b518-a77ff7f92d4e" >> .netrc
-          
-      - name: List files
-        working-directory: ./redwoodblog
-        run: cat .netrc
+      - name: login
+        uses: actions/heroku@master
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        with:
+          args: container:login
           
       - name: Create postgresql database
         working-directory: ./redwoodblog
         run: |          
-          heroku login
           heroku create hello-world-123
           heroku addons:create heroku-postgresql:hobby-dev
           
