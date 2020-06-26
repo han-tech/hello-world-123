@@ -149,7 +149,7 @@ jobs:
       - name: Update database
         env:
           BINARY_TARGET: ${{ secrets.BINARY_TARGET }}
-          DATABASE_URL: ${{ ENV['DATABASE_URL'] }}?connection_limit=1
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         working-directory: ./redwoodblog
         run: |
           yarn rw db save
