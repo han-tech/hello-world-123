@@ -128,13 +128,13 @@ jobs:
       - name: Create .netrc file
         working-directory: ./redwoodblog
         run: |
-          : > ./.netrc
-          echo "machine api.heroku.com" >> ./.netrc
-          echo "  login peaceman77@hotmail.com" >> ./.netrc
-          echo "  password 5c591d0f-1427-47d1-b518-a77ff7f92d4e" >> ./.netrc
-          echo "machine git.heroku.com" >> ./.netrc
-          echo "  login peaceman77@hotmail.com" >> ./.netrc
-          echo "  password 5c591d0f-1427-47d1-b518-a77ff7f92d4e" >> ./.netrc
+          : > .netrc
+          echo "machine api.heroku.com" >> .netrc
+          echo "  login peaceman77@hotmail.com" >> .netrc
+          echo "  password 5c591d0f-1427-47d1-b518-a77ff7f92d4e" >> .netrc
+          echo "machine git.heroku.com" >> .netrc
+          echo "  login peaceman77@hotmail.com" >> .netrc
+          echo "  password 5c591d0f-1427-47d1-b518-a77ff7f92d4e" >> .netrc
           
       - name: List files
         working-directory: ./redwoodblog
