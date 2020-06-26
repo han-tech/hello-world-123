@@ -104,12 +104,12 @@ jobs:
         run: |
           : > ./api/prisma/schema.prisma
           echo "datasource DS {" >> ./api/prisma/schema.prisma
-          echo "  provider = 'sqlite'" >> ./api/prisma/schema.prisma
-          echo "  url      = 'file:./dev.db'" >> ./api/prisma/schema.prisma
+          echo '  provider = "sqlite"' >> ./api/prisma/schema.prisma
+          echo '  url      = "file:./dev.db"' >> ./api/prisma/schema.prisma
           echo "}" >> ./api/prisma/schema.prisma
           echo "generator client {" >> ./api/prisma/schema.prisma
-          echo "  provider = 'prisma-client-js'" >> ./api/prisma/schema.prisma
-          echo "  binaryTargets = 'native'" >> ./api/prisma/schema.prisma
+          echo '  provider = "prisma-client-js"' >> ./api/prisma/schema.prisma
+          echo '  binaryTargets = "native"' >> ./api/prisma/schema.prisma
           echo "}" >> ./api/prisma/schema.prisma
           echo "model Post {" >> ./api/prisma/schema.prisma
           echo "  id        Int      @id @default(autoincrement())" >> ./api/prisma/schema.prisma
