@@ -137,14 +137,14 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         with:
-          args: heroku create hello-world-123
+          args: create hello-world-123
           
-      - name: ostgresql database
+      - name: postgresql database
         uses: actions/heroku@master
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         with:
-          args: heroku addons:create heroku-postgresql:hobby-dev
+          args: addons:create heroku-postgresql:hobby-dev
           
       - name: Update database
         working-directory: ./redwoodblog
