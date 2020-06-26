@@ -137,14 +137,14 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         with:
-          args: create hello-world-123-321-1231
+          args: create hello-world-123-321-1232
           
       - name: postgresql database
         uses: actions/heroku@master
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         with:
-          args: addons:create heroku-postgresql:hobby-dev -a hello-world-123-321-1231
+          args: addons:create heroku-postgresql:hobby-dev -a hello-world-123-321-1232
           
       - name: Update database
         env:
