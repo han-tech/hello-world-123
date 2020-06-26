@@ -138,7 +138,9 @@ jobs:
           
       - name: List files
         working-directory: ./redwoodblog
-        run: ls
+        run: |
+          ls -a
+          cat ~/.netrc
           
       - name: Create postgresql database
         working-directory: ./redwoodblog
