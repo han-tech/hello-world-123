@@ -139,6 +139,10 @@ jobs:
           heroku create hello-world-123
           heroku addons:create heroku-postgresql:hobby-dev
           
+      - name: List files
+        working-directory: ./redwoodblog
+        run: ls
+          
       - name: Update database
         working-directory: ./redwoodblog
         run: |
